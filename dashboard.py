@@ -20,6 +20,10 @@ df = pd.read_csv('./data/outputs.csv')
 df = df.groupby(['risk_category']).size().reset_index(name='Total')
 
 fig = px.pie(df, values='Total', names='risk_category', title="Risk Category",)
+
+colors = ['gold', 'mediumturquoise', 'darkorange']
+fig.update_traces(hoverinfo='label+percent', textinfo='value', textfont_size=20,
+                  marker=dict(colors=colors, line=dict(color="#00F0DC", width=2)))
 st.plotly_chart(fig, theme=None)
 
 ""
