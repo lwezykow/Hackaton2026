@@ -23,32 +23,32 @@ outputAllDf = pd.read_csv('./data/output_all_rules.csv')
 with st.sidebar:
     st.header("Settings")
     ruleType = st.selectbox("Rule type", DEFAULT_RULE, index=0)
-
-if ruleType != 'ALL':
-    outputsDf = outputsDf[outputsDf["triggered_rules"].str.endswith((ruleType, ruleType+";"))]
-    outputAllDf = outputAllDf[outputAllDf["rule_id"] == ruleType]
-
-dfTotal = outputsDf.groupby(['risk_category']).size().reset_index(name='Total')
-
-fig1 = px.pie(dfTotal, values='Total', names='risk_category', title="Risk Category",)
-
-colors = ['gold', 'mediumturquoise', 'darkorange']
-fig1.update_traces(hoverinfo='label+percent', textinfo='value', hole=.3, textfont_size=20,
-                  marker=dict(colors=colors, line=dict(color="#00F0DC", width=2)))
-st.plotly_chart(fig1, theme=None)
-
 ""
 
 if ruleType != 'ALL':
-    dfRules = outputAllDf.groupby(['channel']).size().reset_index(name='Total')
-    fig2 = px.pie(dfRules, values='Total', names='channel', title="Risk Channel",)
+    outputAllDf = outputAllDf[outputAllDf["rule_id"] == ruleType]
+    dfRules = outputAllDf.groupby(['channel']).size().reset_index(name='Count')
+    ruleFig = px.pie(dfRules, values='Count', names='channel', title="Risk Channel",)
+    st.plotly_chart(ruleFig, theme=None)
+
+    dfCustomer = outputAllDf.groupby(['entered_beneficiary_name']).size().reset_index(name='Count')
+    dfCustomer = dfCustomer[dfCustomer["Count"] > 1]
+    beneficiaryFig = px.pie(dfCustomer, values='Count', names='entered_beneficiary_name', title="Beneficiary Name",)
+    st.plotly_chart(beneficiaryFig, theme=None)
+
     with st.expander("View Rules"):
         st.dataframe(outputAllDf, use_container_width=True)
 else:
+    dfCount = outputsDf.groupby(['risk_category']).size().reset_index(name='Count')
+    totalFig = px.pie(dfCount, values='Count', names='risk_category', title="Risk Category",)
+    colors = ['red', 'green', 'blue']
+    totalFig.update_traces(hoverinfo='label+percent', textinfo='value', hole=.3, textfont_size=20,
+                  marker=dict(colors=colors, line=dict(color="#00F0DC", width=2)))
+    st.plotly_chart(totalFig, theme=None)
+    
     dfRules = outputAllDf.groupby(['rule_id']).size().reset_index(name='Count')
-    fig2 = px.bar(dfRules, x='rule_id', y='Count')
-
-st.plotly_chart(fig2, theme=None)
+    ruleFig = px.bar(dfRules, x='rule_id', y='Count')
+    st.plotly_chart(ruleFig, theme=None)
 
 ""
 
