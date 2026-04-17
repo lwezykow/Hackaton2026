@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from typing import Dict
 import logging
 import random
 import sys
@@ -10,6 +11,8 @@ from typing import Optional, cast
 
 from rules.r22 import Rule22
 from rules.r24 import Rule24
+
+FRAUD_THRESHOLD = 30
 
 #-- setup logger
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -23,6 +26,7 @@ start = time.perf_counter()
 # --- load file with transactions to data frame
 print(f'Loading transactions file: {TX_INPUT_FILE}')
 df_transactions = pd.read_csv(TX_INPUT_FILE)
+print('Input transactions sample:')
 print(df_transactions)
 
 
@@ -46,36 +50,56 @@ for rule in rules:
 
 # ---------------------
 # --- process rule ouputs
+print('Combined rules sample:')
+print(df_combined_rules_results)
+
+# calculate raw scores per each rule separately
+df_combined_rules_results['raw_score'] = df_combined_rules_results['severity'] * df_combined_rules_results['weight']
+
+# aggregate raw scores to transaction level
+df_combined_rules_results_grouped = (
+    df_combined_rules_results
+    .groupby("transaction_id", as_index=False)["raw_score"]
+    .sum()
+)
+
+# merge aggregates to input set of transactions
+df_classified_transactions = pd.DataFrame()
+df_classified_transactions['transaction_id'] = df_transactions['transaction_id']
+df_classified_transactions = df_classified_transactions.merge(df_combined_rules_results_grouped, how="left", on="transaction_id")
+df_classified_transactions.fillna(0, inplace=True)
+
+
+# clip aggregated raw score to 0-100 range to produce risk score
+df_classified_transactions["risk_score"] = df_classified_transactions["raw_score"].clip(lower=0, upper=100)
+
+# depending on risk score threshold assign risk category
+df_classified_transactions["risk_category"] = np.select(
+    [df_classified_transactions["risk_score"] < 30,
+    (df_classified_transactions["risk_score"] >= 30) & (df_classified_transactions["risk_score"] < 70),
+    df_classified_transactions["risk_score"] >= 70],
+    ["LOW", "MEDIUM", "HIGH"],
+    default="UNKNOWN"
+)
+
+# set flag whether transaction is fraud or not deciding if risk score has surpased fraud threshold
+df_classified_transactions["is_fraud_transaction"] = (
+    df_classified_transactions["risk_score"] >= FRAUD_THRESHOLD
+)
+
+# note which rules were source of risk score  
+df_grouped_ruleIds = df_combined_rules_results.groupby("transaction_id", as_index=False)["rule_id"].agg(";".join)
+df_grouped_ruleIds.rename(columns={"rule_id": "triggered_rules"}, inplace=True)
+df_classified_transactions = df_classified_transactions.merge(df_grouped_ruleIds, how="left", on="transaction_id")
+df_classified_transactions.fillna('', inplace=True)
 
 
 # ---------------------
-# -- aggregate and calculate scores
-
-
-# ---------------------
-# -- prepare classified transactions dataframe keeping only output columns 
-df_classified_transactions_output = pd.DataFrame()
-df_classified_transactions_output['transaction_id'] = df_transactions['transaction_id']
-df_classified_transactions_output['triggered_rules'] = [
-    random.choice(['R1','R22','R24','R1;R22','R1;24'])
-    for _ in range(len(df_classified_transactions_output))
-]
-df_classified_transactions_output['is_fraud_transaction'] = [
-    random.choice(['True','False'])
-    for _ in range(len(df_classified_transactions_output))
-]
-df_classified_transactions_output['risk_score'] = [
-    random.choice([random.random() * 100.0])
-    for _ in range(len(df_classified_transactions_output))
-]
-df_classified_transactions_output['risk_category'] = [
-    random.choice(['LOW','MEDIUM','HIGH'])
-    for _ in range(len(df_classified_transactions_output))
-]
-
-print(df_classified_transactions_output)
-
 # --- save file with transactions fraud classifications
+print('Output file sample:')
+df_classified_transactions_output = df_classified_transactions[['transaction_id','triggered_rules','is_fraud_transaction','risk_score','risk_category']]
+print(df_classified_transactions)
+
 print(f'Saving classified FRAML transactions file: {TX_INPUT_FILE}')
 df_classified_transactions_output.to_csv(TX_OUTPUT_FILE, index=False)
 
