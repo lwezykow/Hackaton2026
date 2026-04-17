@@ -9,6 +9,7 @@ import pandas as pd
 from typing import Optional, cast
 
 from rules.r22 import Rule22
+from rules.r24 import Rule24
 
 #-- setup logger
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -29,7 +30,10 @@ df_combined_rules_results = pd.DataFrame()
 
 # ---------------------
 # --- run rules
-rules = [Rule22()]
+rules = [
+    Rule22(),
+    Rule24(),
+    ]
 for rule in rules:
     rule_start = time.perf_counter()
 

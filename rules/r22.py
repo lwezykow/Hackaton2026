@@ -9,13 +9,13 @@ class Rule22 (RuleBase):
     AMOUNT_THRESHOLD = 15000
     ruleDescriptor = RuleDescriptor(
             rule_id='R22',
-            rule_category='str',
-            rule='str',
-            business_description='str',
+            rule_category='Threshold',
+            rule='Absolute High-Value Threshold',
+            business_description='Payment exceeds predefined limit.',
             is_mandatory=True,
-            severity=1,
-            weight=1,
-            difficulty=1
+            severity = 2, # Strong
+            weight = 10, 
+            difficulty= 1 # Easy
         )
     
     def __init__(self):
@@ -32,4 +32,5 @@ class Rule22 (RuleBase):
         result['rule_id'] = self.ruleDescriptor.rule_id
         result['severity'] = self.ruleDescriptor.severity
         result['weight'] = self.ruleDescriptor.weight
+        result['remarks'] = 'Payment exceeds predefined limit amount of €15,000'
         return result
