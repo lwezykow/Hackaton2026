@@ -47,7 +47,7 @@ class Rule17 (RuleBase):
         df["suspicious_value_sum_2h"] = agg["suspicious_value"]
 
         df['filter'] = (df["suspicious_value_sum_2h"] >= self.MIN_CLIENT_TRANSACTIONS)
-        # df.to_csv('r17_debug.xlsx', index=False)
+        #df.to_csv('r17_debug.xlsx', index=False)
         # good test example - acc PL745139992949457037354436
 
         df_filtered = df[df["suspicious_value_sum_2h"] >= self.MIN_CLIENT_TRANSACTIONS]
