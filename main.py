@@ -25,6 +25,7 @@ logger = logging.getLogger(__name__)
 
 TX_INPUT_FILE = './data/inputs.csv'
 TX_OUTPUT_FILE = './data/outputs.csv'
+TX_OUTPUT_ALL_RULES = './data/output_all_rules.csv'
 
 start = time.perf_counter()
 # ---------------------
@@ -112,6 +113,11 @@ print(df_classified_transactions)
 
 print(f'Saving classified FRAML transactions file: {TX_INPUT_FILE}')
 df_classified_transactions_output.to_csv(TX_OUTPUT_FILE, index=False)
+
+print(f'Saving all rules per transaction detail file: {TX_OUTPUT_ALL_RULES}')
+
+df_ui_output = df_combined_rules_results.merge(df_ruleInput, how="left", on="transaction_id")
+df_ui_output.to_csv(TX_OUTPUT_ALL_RULES, index=False)
 
 end = time.perf_counter()
 print(f"Total execution time: {end - start:.3f} seconds")
