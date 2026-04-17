@@ -12,6 +12,7 @@ from typing import Optional, cast
 from rules.r1 import Rule1
 from rules.r2 import Rule2
 from rules.r3 import Rule3
+from rules.r6 import Rule6
 from rules.r7 import Rule7
 from rules.r10 import Rule10
 from rules.r17 import Rule17
@@ -47,6 +48,7 @@ rules = [
     Rule1(),
     Rule2(),
     Rule3(),
+    Rule6(),
     Rule7(),
     Rule10(),
     Rule17(),
