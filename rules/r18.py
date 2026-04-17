@@ -45,5 +45,6 @@ class Rule18 (RuleBase):
         result['rule_id'] = self.ruleDescriptor.rule_id
         result['severity'] = self.ruleDescriptor.severity
         result['weight'] = self.ruleDescriptor.weight
+        result['remarks'] = f"Round amounts anomaly detected"
 
         return result
