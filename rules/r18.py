@@ -37,6 +37,8 @@ class Rule18 (RuleBase):
                 .reset_index(drop=True)
         )
         
+        df_filtered['filter'] = (df_filtered["tx_count_48h"] >= self.MAX_CLIENT_TRANSACTIONS)
+        #df.to_csv('r18_debug.xlsx', index=False)
         df_filtered = df_filtered[df_filtered["tx_count_48h"] >= self.MAX_CLIENT_TRANSACTIONS]        
 
         result = pd.DataFrame()
