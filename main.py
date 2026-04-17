@@ -9,6 +9,7 @@ import pandas as pd
 from typing import Optional, cast
 
 from rules.r1 import Rule1
+from rules.r18 import Rule18
 from rules.r22 import Rule22
 from rules.r24 import Rule24
 
@@ -33,6 +34,7 @@ df_combined_rules_results = pd.DataFrame()
 # --- run rules
 rules = [
     Rule1(),
+    Rule18(),
     Rule22(),
     Rule24(),
     ]
