@@ -27,23 +27,20 @@ fig1.update_traces(hoverinfo='label+percent', textinfo='value', hole=.3, textfon
                   marker=dict(colors=colors, line=dict(color="#00F0DC", width=2)))
 st.plotly_chart(fig1, theme=None)
 
-"""
-## Total Risk Category
-"""
-dfTotal
+with st.expander("View Total Risk Category"):
+    st.dataframe(dfTotal, use_container_width=True)
 
 ""
 
 dfRules = df['triggered_rules'].str.split(';').explode().to_frame()
-dfRules = dfRules.groupby(['triggered_rules']).size().reset_index(name='Total')
+dfRules = dfRules.groupby(['triggered_rules']).size().reset_index(name='Count')
 
-fig2 = px.bar(dfRules, x='triggered_rules', y='Total')
+fig2 = px.bar(dfRules, x='triggered_rules', y='Count')
 st.plotly_chart(fig2, theme=None)
 
-"""
-## Total Rules
-"""
-dfRules
+with st.expander("View Count Rules"):
+    st.dataframe(dfRules, use_container_width=True)
+
 ""
 ""
 
