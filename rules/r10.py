@@ -56,10 +56,10 @@ class Rule10 (RuleBase):
         )
 
         # print(df)
-        # df.to_csv('r10_debug.xlsx', index=False)
-
-        df_filtered = df[df["is_new_country"] & (df["amount"] > self.AMOUNT_THRESHOLD)]
-        #df_filtered.to_csv('r10_debug.xlsx', index=False)
+        #df.to_csv('r10_debug.xlsx', index=False)
+        
+        df_filtered = df[(df["is_new_country"] == True) & (df["amount"] > self.AMOUNT_THRESHOLD)]
+        df_filtered.to_csv('r10_debug.xlsx', index=False)
 
         result = pd.DataFrame()
         result['transaction_id'] = df_filtered[['transaction_id']]

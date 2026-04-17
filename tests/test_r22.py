@@ -37,7 +37,7 @@ def test_r22_evaluate_amount_is_over_15k_EUR_FLAG_as_fraud():
     df_output = rule.evaluate(df_input)
     # ensure we have correctly identified single transaction with amount over threshold
     assert len(df_output) == 1
-    assert df_output.loc[0]['transaction_id'] == 'TX-000001' 
+    assert df_output.iloc[0]['transaction_id'] == 'TX-000001' 
 
 def test_r22_evaluate_amount_is_under_15k_EUR_DONT_flag_as_fraud():
     rule = Rule22()
