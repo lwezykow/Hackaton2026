@@ -1,5 +1,5 @@
 pip install streamlit
 pip install plotly
 
-then
-python -m streamlit run dashboard.py
+How to run:
+uv run streamlit run dashboard.py
