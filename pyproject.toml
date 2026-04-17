@@ -1,0 +1,16 @@
+[project]
+name = "Hackaton2026RIPCS"
+version = "0.1.0"
+description = "RIPCS"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "altair>=5.5.0",
+  "pandas>=2.2.3",
+  "requests>=2.32.3",
+  "streamlit>=1.45.0",
+  "plotly>=6.7.0",
+]
+
+[tool.uv]
+package = false
