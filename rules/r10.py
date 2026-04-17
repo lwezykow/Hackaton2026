@@ -59,7 +59,7 @@ class Rule10 (RuleBase):
         #df.to_csv('r10_debug.xlsx', index=False)
         
         df_filtered = df[(df["is_new_country"] == True) & (df["amount"] > self.AMOUNT_THRESHOLD)]
-        df_filtered.to_csv('r10_debug.xlsx', index=False)
+        #df_filtered.to_csv('r10_debug.xlsx', index=False)
 
         result = pd.DataFrame()
         result['transaction_id'] = df_filtered[['transaction_id']]
