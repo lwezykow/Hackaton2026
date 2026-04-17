@@ -11,9 +11,9 @@ class Rule1 (RuleBase):
     ruleDescriptor = RuleDescriptor(
             rule_id='R1',
             rule_category='Confirmation of Payee (CoP)',
-            rule='CoP Name Mismatch – Hard Fail',
+            rule='CoP Name Mismatch - Hard Fail',
             business_description='''The entered beneficiety name is significantly different from the official registered account name, indicating high fraud risk.
-For CoP in real the sender’s bank sends the entered name + IBAN to the receiving bank's API
+For CoP in real the sender's bank sends the entered name + IBAN to the receiving bank's API
 The receiving bank  performs comparition with the account owner name and returns results.''',
             is_mandatory=True,
             severity=2,
@@ -44,5 +44,6 @@ The receiving bank  performs comparition with the account owner name and returns
         result['rule_id'] = self.ruleDescriptor.rule_id
         result['severity'] = self.ruleDescriptor.severity
         result['weight'] = self.ruleDescriptor.weight
+        result['remarks'] = f"Confirmation of Payee - Name Mismatch detected"
 
         return result
