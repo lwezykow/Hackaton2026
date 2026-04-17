@@ -4,19 +4,18 @@ from rules.RuleBase import RuleBase
 from rules.RuleDescriptor import RuleDescriptor
 from utils.Normalizer import Normalizer
 
-class Rule2 (RuleBase):
-
-    LOWER_SIMILARITY_BOUNDRY = 0.8
-    UPPER_SIMILARITY_BOUNDRY = 0.89
+class Rule3 (RuleBase):
+    
+    SIMILARITY_THRESHOLD = 0.89
 
     ruleDescriptor = RuleDescriptor(
-            rule_id='R2',
+            rule_id='R3',
             rule_category='Confirmation of Payee (CoP)',
-            rule='CoP Name Mismatch - Soft Warning',
-            business_description='A minor mismatch exists between entered name and official account name, often due to typos but requiring user awareness.',
+            rule='New Beneficiary + CoP Mismatch',
+            business_description='Payment to first - time recipient with insufficient name match, increasing fraud likelihood.',
             is_mandatory=False,
             severity=1,
-            weight=5,
+            weight=10,
             difficulty=1
         )
     
@@ -33,16 +32,16 @@ class Rule2 (RuleBase):
                 row["official_beneficiary_account_name"],
             ),
             axis=1
-        )        
-
-        df_filtered = df[(df["similarity_score"].between(self.LOWER_SIMILARITY_BOUNDRY, self.UPPER_SIMILARITY_BOUNDRY))]
+        )
         
+        df_filtered = df[((df["similarity_score"] < self.SIMILARITY_THRESHOLD) & (df["is_new_beneficiary"] == True))]               
+
         result = pd.DataFrame()
 
         result['transaction_id'] = df_filtered[['transaction_id']]
         result['rule_id'] = self.ruleDescriptor.rule_id
         result['severity'] = self.ruleDescriptor.severity
         result['weight'] = self.ruleDescriptor.weight
-        result['remarks'] = f"CoP Name Mismatch - Soft Warning"
+        result['remarks'] = f"New Beneficiary + CoP Mismatch"
 
         return result

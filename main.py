@@ -11,6 +11,7 @@ from typing import Optional, cast
 
 from rules.r1 import Rule1
 from rules.r2 import Rule2
+from rules.r3 import Rule3
 from rules.r7 import Rule7
 from rules.r10 import Rule10
 from rules.r18 import Rule18
@@ -43,6 +44,7 @@ df_combined_rules_results = pd.DataFrame()
 rules = [
     Rule1(),
     Rule2(),
+    Rule3(),
     Rule7(),
     Rule10(),
     Rule18(),
