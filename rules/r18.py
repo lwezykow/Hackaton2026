@@ -25,6 +25,7 @@ class Rule18 (RuleBase):
     def evaluate(self, df:pd.DataFrame) -> pd.DataFrame :
 
         df_filtered = df[np.isclose(df["amount"] % 10, 0)]
+        df_filtered = df_filtered.copy()
         df_filtered["transaction_timestamp"] = pd.to_datetime(df_filtered["transaction_timestamp"])
         df_filtered = df_filtered.sort_values(["customer_id", "transaction_timestamp"]).reset_index(drop=True).copy()
 
