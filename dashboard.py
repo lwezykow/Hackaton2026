@@ -16,9 +16,19 @@ GTA VI is going
 
 ""  # Add some space.
 
-DEFAULT_RULE = ["R1", "R2", "R3", "R6", "R7", "R8", "R10", "R12", "R13", "R17", "R18", "R21", "R22", "R24"]
-df = pd.read_csv('./data/outputs.csv')
-dfTotal = df.groupby(['risk_category']).size().reset_index(name='Total')
+DEFAULT_RULE = ["ALL", "R1", "R2", "R3", "R6", "R7", "R8", "R10", "R12", "R13", "R17", "R18", "R21", "R22", "R24"]
+outputsDf = pd.read_csv('./data/outputs.csv')
+outputAllDf = pd.read_csv('./data/output_all_rules.csv')
+
+with st.sidebar:
+    st.header("Settings")
+    ruleType = st.selectbox("Rule type", DEFAULT_RULE, index=0)
+
+if ruleType != 'ALL':
+    outputsDf = outputsDf[outputsDf["triggered_rules"].str.endswith((ruleType, ruleType+";"))]
+    outputAllDf = outputAllDf[outputAllDf["rule_id"] == ruleType]
+
+dfTotal = outputsDf.groupby(['risk_category']).size().reset_index(name='Total')
 
 fig1 = px.pie(dfTotal, values='Total', names='risk_category', title="Risk Category",)
 
@@ -27,20 +37,18 @@ fig1.update_traces(hoverinfo='label+percent', textinfo='value', hole=.3, textfon
                   marker=dict(colors=colors, line=dict(color="#00F0DC", width=2)))
 st.plotly_chart(fig1, theme=None)
 
-with st.expander("View Total Risk Category"):
-    st.dataframe(dfTotal, use_container_width=True)
-
 ""
 
-dfRules = df['triggered_rules'].str.split(';').explode().to_frame()
-dfRules = dfRules.groupby(['triggered_rules']).size().reset_index(name='Count')
+if ruleType != 'ALL':
+    dfRules = outputAllDf.groupby(['channel']).size().reset_index(name='Total')
+    fig2 = px.pie(dfRules, values='Total', names='channel', title="Risk Channel",)
+    with st.expander("View Rules"):
+        st.dataframe(outputAllDf, use_container_width=True)
+else:
+    dfRules = outputAllDf.groupby(['rule_id']).size().reset_index(name='Count')
+    fig2 = px.bar(dfRules, x='rule_id', y='Count')
 
-fig2 = px.bar(dfRules, x='triggered_rules', y='Count')
 st.plotly_chart(fig2, theme=None)
 
-with st.expander("View Count Rules"):
-    st.dataframe(dfRules, use_container_width=True)
-
-""
 ""
 
