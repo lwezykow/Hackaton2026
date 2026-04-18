@@ -14,6 +14,7 @@ from rules.r2 import Rule2
 from rules.r3 import Rule3
 from rules.r6 import Rule6
 from rules.r7 import Rule7
+from rules.r8 import Rule8
 from rules.r10 import Rule10
 from rules.r17 import Rule17
 from rules.r18 import Rule18
@@ -50,6 +51,7 @@ rules = [
     Rule3(),
     Rule6(),
     Rule7(),
+    Rule8(),
     Rule10(),
     Rule17(),
     Rule18(),
