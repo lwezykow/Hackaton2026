@@ -1,3 +1,4 @@
+pip install uv
 pip install streamlit
 pip install plotly
 
